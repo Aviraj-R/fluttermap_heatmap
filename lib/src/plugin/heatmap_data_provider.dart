@@ -14,12 +14,16 @@ class InMemoryHeatMapDataSource extends HeatMapDataSource {
   final LatLngBounds bounds;
 
   InMemoryHeatMapDataSource({required this.data})
-      : bounds = LatLngBounds.fromPoints(data.map((e) => e.latLng).toList());
+      : bounds = data.isNotEmpty
+            ? LatLngBounds.fromPoints(data.map((e) => e.latLng).toList())
+            : LatLngBounds.fromPoints([
+                LatLng(0, 0), // Provide default values
+                LatLng(0, 0),
+              ]);
 
-  ///Filters in memory data returning the data ungridded
   @override
   List<WeightedLatLng> getData(LatLngBounds bounds, double z) {
-    if (bounds.isOverlapping(bounds)) {
+    if (bounds.isOverlapping(this.bounds)) {
       if (data.isEmpty) {
         return [];
       }
